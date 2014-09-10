@@ -1,0 +1,1 @@
+A simple question text and answer text editor for Moodle multi choice questions
