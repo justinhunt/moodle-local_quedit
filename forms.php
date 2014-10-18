@@ -49,6 +49,35 @@ class local_quedit_category_form extends moodleform {
 		$mform->addElement('select', 'catid', get_string('select_category','local_quedit'),$options);
         $mform->setType('catid', PARAM_INT);
 	
+		$mform->addElement('advcheckbox', 'includechildren', get_string('includechildren', 'local_quedit'),'',null, array(0, 1));
+		$mform->setType('includechildren', PARAM_INT);
+		
+		$mform->addElement('hidden', 'action', 'dogetcategory');
+        $mform->setType('action', PARAM_TEXT);
+
+		
+		$mform->addElement('submit', 'submitbutton', get_string('docat_label', 'local_quedit'));
+
+	}
+
+}
+
+class local_quedit_category_form_new extends moodleform {
+
+    public function definition() {
+        global $CFG, $USER, $OUTPUT, $COURSE;
+        $strrequired = get_string('required');
+        $contexts   = $this->_customdata['contexts'];
+        $mform = & $this->_form;
+		
+		$mform->addElement('questioncategory', 'catid', get_string('category', 'question'),
+    		array('contexts'=>$contexts, 'top'=>true));
+		/*
+		$mform->addElement('questioncategory', 'category', get_string('category', 'question'),
+    array('contexts'=>$contexts, 'top'=>true, 'currentcat'=>$currentcat, 'nochildrenof'=>$currentcat));
+    */
+
+
 
 		
 		$mform->addElement('hidden', 'action', 'dogetcategory');

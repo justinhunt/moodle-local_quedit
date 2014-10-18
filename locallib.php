@@ -77,8 +77,8 @@ class local_quedit_manager {
 		return $qandas;
 	}
 
-	public function get_qanda2($catid){
-		$questions = $this->get_questions($catid);
+	public function get_qanda2($catid, $includechildren=true, $qtype="multichoice"){
+		$questions = $this->get_questions($catid, $includechildren, $qtype);
 		$qid=array();
 		$questiontext=array();
 		$aid_1=array();
@@ -166,10 +166,23 @@ class local_quedit_manager {
      * @param integer course module id
      * @return id of quedit or false if already added
      */
-    public function get_questions($catid) {
+    public function get_questions($catid, $includechildren=true, $qtype='multichoice') {
         global $DB;
 		//$result = $DB->get_records_sql('SELECT * FROM {question} qt INNER JOIN {question_answers} qta ON qta.question= qt.id WHERE qt.category = ?', array( $catid));
-		$result = $DB->get_records('question', array('category' => $catid,'qtype'=>'videoproctormc'));
+		$result = array();
+		if($includechildren){
+			$child_cats = $DB->get_records('question_categories', array('parent' => $catid));
+			if($child_cats){
+				foreach ($child_cats as $cat){
+					$child_questions = $DB->get_records('question', array('category' => $cat->id,'qtype'=>$qtype));
+					if($child_questions){
+						$result = array_merge($result, $child_questions);
+					}
+				}
+			}
+		}else{
+			$result = $DB->get_records('question', array('category' => $catid,'qtype'=>$qtype));
+		}
 		//$result = $DB->get_records('question', array('category' => $catid,'qtype'=>'multichoice'));
 		return $result;
     }

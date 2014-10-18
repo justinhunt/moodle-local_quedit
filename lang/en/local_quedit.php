@@ -39,6 +39,7 @@ $string['updatedsuccessfully'] = '{$a} Questions Updatefully';
 $string['failedtoupdate'] = 'Failed to update questions.';
 $string['noquestions'] = 'Category contains no questions.';
 $string['wedontaddfields'] = 'We do not add fields.';
+$string['includechildren'] = 'Include questions from subcategories';
 
 $string['listview'] = 'quedit Assignments';
 $string['queditlist'] = 'quedit: {$a}';

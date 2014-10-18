@@ -43,8 +43,9 @@ $context = context_system::instance();
 require_capability('local/quedit:managequestions', $context);
 
 
-$action = required_param('action', PARAM_TEXT); //the user action to take
+$action = optional_param('action','getcategory' ,PARAM_TEXT); //the user action to take
 $catid =  optional_param('catid',0, PARAM_INT); //the id of the group
+$includechildren =  optional_param('includechildren',0, PARAM_INT); //the id of the group
 
 $PAGE->set_url('/local/quedit/view.php');
 $PAGE->set_context($context);
@@ -71,9 +72,11 @@ switch($action){
 	case 'dogetcategory':
 		//To do. here collect the data from the form and update in the db using. maybe
 		//get add form
-		$cat_form = new local_quedit_category_form();
+		
+		$cat_form = new local_quedit_category_form(null, array());
 		$data = $cat_form->get_data();
 		$catid = $data->catid;
+		$includechildren = $data->includechildren;
 		$message = get_string('category_updated','local_quedit');
 		break;
 
@@ -107,6 +110,8 @@ switch($action){
 		echo $renderer->heading(get_string('select_category', 'local_quedit'), 3, 'main');
 		$gdata = new stdClass();
 		if($catid){$gdata->catid=$catid;}
+		if($includechildren){$gdata->includechildren=$includechildren;}
+		//$contexts = x;null, array('contexts'=>$contexts)
 		$catform = new local_quedit_category_form();
 		$catform->set_data($gdata);
 		$catform->display();
@@ -114,25 +119,26 @@ switch($action){
 		return;
 }
 
-local_quedit_show_all_questions($catid, $renderer, $message);
+local_quedit_show_all_questions($catid, $includechildren, $renderer, $message);
 
 	/**
 	 * Show *all* families
 	 * @param string $message any status messages can be displayed
 	 */
-	function local_quedit_show_all_questions($catid, $renderer, $message=false){
+	function local_quedit_show_all_questions($catid,$includechildren, $renderer, $message=false){
 		if($message){
 			echo $renderer->heading($message,5,'main');
 		}
 		$gdata = new stdClass();
 		$catform = new local_quedit_category_form();
 		$gdata->catid = $catid;
+		$gdata->includechildren = $includechildren;
 		$catform->set_data($gdata);
 		$catform->display();
 		
 		
 		$bfm = new local_quedit_manager($catid);
-		$queditdata =  $bfm->get_qanda2($catid);
+		$queditdata =  $bfm->get_qanda2($catid, $includechildren, 'multichoice');
 		//print_r($queditdata);
 		$fieldcount = count($queditdata['qid']);
 		if($fieldcount>0){
