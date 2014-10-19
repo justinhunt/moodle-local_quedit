@@ -48,6 +48,12 @@ class local_quedit_category_form extends moodleform {
 
 		$mform->addElement('select', 'catid', get_string('select_category','local_quedit'),$options);
         $mform->setType('catid', PARAM_INT);
+        
+        $options =array();
+        $options['videoproctormc'] = 'Video Proctor Multi-Choice';
+        $options['multichoice'] = 'Multi-Choice';
+        $mform->addElement('select', 'qtype', get_string('qtype','local_quedit'),$options);
+		$mform->setType('groupid', PARAM_INT);
 	
 		$mform->addElement('advcheckbox', 'includechildren', get_string('includechildren', 'local_quedit'),'',null, array(0, 1));
 		$mform->setType('includechildren', PARAM_INT);

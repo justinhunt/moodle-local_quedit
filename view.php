@@ -44,7 +44,8 @@ require_capability('local/quedit:managequestions', $context);
 
 
 $action = optional_param('action','getcategory' ,PARAM_TEXT); //the user action to take
-$catid =  optional_param('catid',0, PARAM_INT); //the id of the group
+$catid =  optional_param('catid',0, PARAM_INT); //the id of the category
+$qtype =  optional_param('qtype','videoproctormc', PARAM_TEXT); //the question type
 $includechildren =  optional_param('includechildren',0, PARAM_INT); //the id of the group
 
 $PAGE->set_url('/local/quedit/view.php');
@@ -77,6 +78,7 @@ switch($action){
 		$data = $cat_form->get_data();
 		$catid = $data->catid;
 		$includechildren = $data->includechildren;
+		$qtype = $data->qtype;
 		$message = get_string('category_updated','local_quedit');
 		break;
 
@@ -111,6 +113,7 @@ switch($action){
 		$gdata = new stdClass();
 		if($catid){$gdata->catid=$catid;}
 		if($includechildren){$gdata->includechildren=$includechildren;}
+		if($qtype){$gdata->qtype=$qtype;}
 		//$contexts = x;null, array('contexts'=>$contexts)
 		$catform = new local_quedit_category_form();
 		$catform->set_data($gdata);
@@ -119,13 +122,13 @@ switch($action){
 		return;
 }
 
-local_quedit_show_all_questions($catid, $includechildren, $renderer, $message);
+local_quedit_show_all_questions($catid, $includechildren, $qtype, $renderer, $message);
 
 	/**
 	 * Show *all* families
 	 * @param string $message any status messages can be displayed
 	 */
-	function local_quedit_show_all_questions($catid,$includechildren, $renderer, $message=false){
+	function local_quedit_show_all_questions($catid,$includechildren, $qtype, $renderer, $message=false){
 		if($message){
 			echo $renderer->heading($message,5,'main');
 		}
@@ -138,7 +141,7 @@ local_quedit_show_all_questions($catid, $includechildren, $renderer, $message);
 		
 		
 		$bfm = new local_quedit_manager($catid);
-		$queditdata =  $bfm->get_qanda2($catid, $includechildren, 'multichoice');
+		$queditdata =  $bfm->get_qanda2($catid, $includechildren, $qtype);
 		//print_r($queditdata);
 		$fieldcount = count($queditdata['qid']);
 		if($fieldcount>0){
